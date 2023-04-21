@@ -16,6 +16,7 @@ namespace NetworkUtility.Services
         byte[] buffer { get; set; }
         int timeout { get; set; }
         string address { get; set; }
+        string[] addresses { get; set; }
 
         public PingService()
         {
@@ -34,10 +35,26 @@ namespace NetworkUtility.Services
 
             pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
 
-            return pingReply;
-        }    
+            ReadPingInfo(pingReply);
 
-        public void ReadPingInfo(PingReply pingReply)
+            return pingReply;
+        }
+
+        public PingReply SendPing(params string[] addresses)
+        {
+            this.addresses = addresses;
+
+            foreach (string address in addresses)
+            {
+                pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
+
+                ReadPingInfo(pingReply);
+            }
+
+            return pingReply;
+        }
+
+        void ReadPingInfo(PingReply pingReply)
         {
             Console.WriteLine(pingReply.Status);
             if (pingReply.Status == IPStatus.Success)
@@ -47,6 +64,7 @@ namespace NetworkUtility.Services
                 Console.WriteLine("Time to live: {0}", pingReply.Options.Ttl);
                 Console.WriteLine("Don't fragment: {0}", pingReply.Options.DontFragment);
                 Console.WriteLine("Buffer size: {0}", pingReply.Buffer.Length);
+                Console.WriteLine();
             }
         }
     }
