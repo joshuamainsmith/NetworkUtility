@@ -11,12 +11,12 @@ namespace NetworkUtility.Services
     {
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
-        PingReply pingReply { get; set; }
+        PingReply? pingReply { get; set; }
         string data { get; set; }
         byte[] buffer { get; set; }
         int timeout { get; set; }
-        string address { get; set; }
-        string[] addresses { get; set; }
+        string? address { get; set; }
+        string[]? addresses { get; set; }
 
         public PingService()
         {
@@ -26,11 +26,12 @@ namespace NetworkUtility.Services
             data = "**Network Connection Test Ping**";
             buffer = Encoding.ASCII.GetBytes(data);
             timeout = 120;
-            address = "localhost";
         }
 
-        public PingReply SendPing(string address)
+        public PingReply? SendPing(string address)
         {
+            if(address == String.Empty) return null;
+
             this.address = address;
 
             pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
@@ -40,18 +41,20 @@ namespace NetworkUtility.Services
             return pingReply;
         }
 
-        public PingReply SendPing(params string[] addresses)
+        public PingReply? SendPing(params string[] addresses)
         {
             this.addresses = addresses;
 
             foreach (string address in addresses)
             {
-                pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
-
-                ReadPingInfo(pingReply);
+                if (address != String.Empty)
+                {
+                    pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
+                    ReadPingInfo(pingReply);
+                }
             }
 
-            return pingReply;
+            return pingReply == null ? null : pingReply;
         }
 
         void ReadPingInfo(PingReply pingReply)
@@ -66,6 +69,7 @@ namespace NetworkUtility.Services
                 Console.WriteLine("Buffer size: {0}", pingReply.Buffer.Length);
                 Console.WriteLine();
             }
+            // TODO : else print reason ping failed
         }
     }
 }
