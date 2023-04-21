@@ -2,6 +2,6 @@
 
 PingService pingService = new PingService();
 
-pingService.SendPing("google.com");
+pingService.SendPing("");
 
-pingService.SendPing("google.com", "bing.com");
+pingService.SendPing("", "");
