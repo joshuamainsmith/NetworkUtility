@@ -50,8 +50,7 @@ namespace NetworkUtility.Services
             {
                 if (address != String.Empty)
                 {
-                    pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
-                    ReadPingInfo(pingReply);
+                    pingReply = SendPing(address); 
                 }
             }
 
@@ -70,8 +69,7 @@ namespace NetworkUtility.Services
             {
                 if (address != String.Empty)
                 {
-                    pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
-                    ReadPingInfo(pingReply);
+                    pingReply = SendPing(address); 
                 }
 
                 address = addresses.ReadLine();
