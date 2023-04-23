@@ -17,15 +17,16 @@ namespace NetworkUtility.Services
         int timeout { get; set; }
         string? address { get; set; }
         string[]? addresses { get; set; }
+        string? filePath { get; set; }
 
         public PingService()
         {
             pingSender = new Ping();
             pingOptions = new PingOptions();
             pingOptions.DontFragment = true;
-            data = "**Network Connection Test Ping**";
+            data = "**Network Connection Test Ping**";  // 32 bytes
             buffer = Encoding.ASCII.GetBytes(data);
-            timeout = 120;
+            timeout = 1000;                             // 1 second
         }
 
         public PingReply? SendPing(string address)
@@ -53,6 +54,30 @@ namespace NetworkUtility.Services
                     ReadPingInfo(pingReply);
                 }
             }
+
+            return pingReply == null ? null : pingReply;
+        }
+
+        public PingReply? SendPingByFile(string filePath)
+        {
+            this.filePath = filePath;
+
+            StreamReader addresses = new StreamReader(filePath);
+
+            var address = addresses.ReadLine();
+
+            while (address != null)
+            {
+                if (address != String.Empty)
+                {
+                    pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
+                    ReadPingInfo(pingReply);
+                }
+
+                address = addresses.ReadLine();
+            }
+
+            addresses.Close();            
 
             return pingReply == null ? null : pingReply;
         }
