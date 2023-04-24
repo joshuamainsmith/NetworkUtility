@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -19,6 +20,7 @@ namespace NetworkUtility.Services
         string? address { get; set; }
         string[]? addresses { get; set; }
         string? filePath { get; set; }
+        // https://regexper.com/#%5E%28www%5C.%29%3F%5Cw%2B%28%5C.%5Cw%2B%29%2B%24
         static Regex checkValidHostOrIP = new Regex(@"^(www\.)?\w+(\.\w+)+$", 
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -27,9 +29,9 @@ namespace NetworkUtility.Services
             pingSender = new Ping();
             pingOptions = new PingOptions();
             pingOptions.DontFragment = true;
-            data = "**Network Connection Test Ping**";  // 32 bytes
+            data = "**Network Connection Test Ping**";
             buffer = Encoding.ASCII.GetBytes(data);
-            timeout = 1000;                             // 1 second            
+            timeout = 1000;           
         }
 
         public PingReply? SendPing(string address)
@@ -42,9 +44,17 @@ namespace NetworkUtility.Services
 
             this.address = address;
 
-            pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
-
-            ReadPingInfo(pingReply);
+            try
+            {
+                Console.WriteLine(address);
+                pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
+                ReadPingInfo(pingReply);
+            }
+            catch (PingException ex)
+            {
+                Console.WriteLine(ex.InnerException);
+                Console.WriteLine();
+            }
 
             return pingReply;
         }
@@ -100,13 +110,13 @@ namespace NetworkUtility.Services
             if (pingReply.Status == IPStatus.Success)
             {
                 Console.WriteLine("Address: {0}", pingReply.Address.ToString());
+                Console.WriteLine("Address Family: {0}", pingReply.Address.AddressFamily.ToString());
                 Console.WriteLine("RoundTrip time: {0}", pingReply.RoundtripTime);
                 Console.WriteLine("Time to live: {0}", pingReply.Options.Ttl);
                 Console.WriteLine("Don't fragment: {0}", pingReply.Options.DontFragment);
                 Console.WriteLine("Buffer size: {0}", pingReply.Buffer.Length);
                 Console.WriteLine();
             }
-            // TODO : else print reason ping failed
         }
     }
 }
