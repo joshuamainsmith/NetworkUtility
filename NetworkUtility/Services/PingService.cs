@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NetworkUtility.Services
 {
-    internal class PingService
+    public class PingService
     {
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
@@ -77,22 +77,28 @@ namespace NetworkUtility.Services
         public PingReply? SendPingByFile(string filePath)
         {
             this.filePath = filePath;
-
-            StreamReader addresses = new StreamReader(filePath);
-
-            var address = addresses.ReadLine();
-
-            while (address != null)
+            try 
             {
-                if (address != String.Empty)
+                StreamReader addresses = new StreamReader(filePath);
+                var address = addresses.ReadLine();
+
+                while (address != null)
                 {
-                    pingReply = SendPing(address); 
+                    if (address != String.Empty)
+                    {
+                        pingReply = SendPing(address);
+                    }
+
+                    address = addresses.ReadLine();
                 }
 
-                address = addresses.ReadLine();
+                addresses.Close();
             }
-
-            addresses.Close();            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
 
             return pingReply ?? null;
         }
