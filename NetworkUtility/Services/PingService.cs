@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NetworkUtility.Services
@@ -18,6 +19,8 @@ namespace NetworkUtility.Services
         string? address { get; set; }
         string[]? addresses { get; set; }
         string? filePath { get; set; }
+        static Regex checkValidHostOrIP = new Regex(@"^(www\.)?\w+(\.\w+)+$", 
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public PingService()
         {
@@ -26,12 +29,16 @@ namespace NetworkUtility.Services
             pingOptions.DontFragment = true;
             data = "**Network Connection Test Ping**";  // 32 bytes
             buffer = Encoding.ASCII.GetBytes(data);
-            timeout = 1000;                             // 1 second
+            timeout = 1000;                             // 1 second            
         }
 
         public PingReply? SendPing(string address)
         {
             if(address == String.Empty) return null;
+
+            bool isValid = CheckHostNameOrAddress(address);
+
+            if(!isValid) return null;
 
             this.address = address;
 
@@ -54,7 +61,7 @@ namespace NetworkUtility.Services
                 }
             }
 
-            return pingReply == null ? null : pingReply;
+            return pingReply ?? null;
         }
 
         public PingReply? SendPingByFile(string filePath)
@@ -77,7 +84,14 @@ namespace NetworkUtility.Services
 
             addresses.Close();            
 
-            return pingReply == null ? null : pingReply;
+            return pingReply ?? null;
+        }
+
+        bool CheckHostNameOrAddress(string address)
+        {
+            MatchCollection matches = checkValidHostOrIP.Matches(address);
+
+            return matches.Count > 0;
         }
 
         void ReadPingInfo(PingReply pingReply)
