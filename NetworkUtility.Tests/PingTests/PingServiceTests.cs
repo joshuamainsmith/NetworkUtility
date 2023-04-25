@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace NetworkUtility.Tests.PingTests
 {
@@ -45,6 +47,17 @@ namespace NetworkUtility.Tests.PingTests
             result.RoundtripTime.Should().BeGreaterThan(0);
             result.Options.DontFragment.Should().Be(false);
             result.Should().BeOfType<PingReply>().Which.Buffer.Length.Should().BeLessThanOrEqualTo(65507);   // https://stackoverflow.com/q/9449837
+        }
+
+        [Fact]
+        public void GivenSingleHostBadInput_SendPing_ReturnsPingReply()
+        {
+            var pingService = new PingService();
+
+            var result = pingService.SendPing("1234");
+
+            pingService.Should().NotBeNull();
+            result.Should().BeNull();
         }
     }
 }
