@@ -8,8 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-[assembly: InternalsVisibleTo("NetworkUtility.Tests")]
-
 namespace NetworkUtility.Services
 {
     public class PingService
@@ -57,6 +55,7 @@ namespace NetworkUtility.Services
             {
                 Console.WriteLine(ex.InnerException);
                 Console.WriteLine();
+                return null;
             }
 
             return pingReply;
@@ -106,7 +105,7 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
-        bool CheckHostNameOrAddress(string address)
+        protected bool CheckHostNameOrAddress(string address)
         {
             MatchCollection matches = checkValidHostOrIP.Matches(address);
 
