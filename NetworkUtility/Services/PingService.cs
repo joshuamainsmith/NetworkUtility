@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("NetworkUtility.Tests")]
 
 namespace NetworkUtility.Services
 {
@@ -62,7 +65,7 @@ namespace NetworkUtility.Services
         public PingReply? SendPing(params string[] addresses)
         {
             this.addresses = addresses;
-
+            
             foreach (string address in addresses)
             {
                 if (address != String.Empty)
