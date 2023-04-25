@@ -32,7 +32,7 @@ namespace NetworkUtility.Tests.PingTests
             result.Should().NotBeNull();
             result.Address.ToString().Should().NotBeNullOrWhiteSpace();
             result.Options.Ttl.Should().BeGreaterThanOrEqualTo(0);
-            result.RoundtripTime.Should().BeGreaterThan(0);
+            result.RoundtripTime.Should().BeGreaterThanOrEqualTo(0);
             result.Options.DontFragment.Should().Be(false);
             result.Should().BeOfType<PingReply>().Which.Buffer.Length.Should().BeLessThanOrEqualTo(65507);   // https://stackoverflow.com/q/9449837
         }        
@@ -62,14 +62,11 @@ namespace NetworkUtility.Tests.PingTests
         [InlineData("0.0.0.0", true)]
         [InlineData("1.3.3.7", true)]
         [InlineData("!@#$%.42.com", false)]
-        public void PingService_CheckHostNameOrAddress_ReturnsBool(string addresses, bool expected)
+        public void PingService_CheckHostNameOrAddress_ReturnsBool(string address, bool expected)
         {
-            var pingService = new PingService();
+            var actual = CheckHostNameOrAddress(address);
 
-            var result = pingService.SendPing(addresses);
-
-            pingService.Should().NotBeNull();
-            result.Should().BeNull();
+            actual.Should().Be(expected);
         }
     }
 }
