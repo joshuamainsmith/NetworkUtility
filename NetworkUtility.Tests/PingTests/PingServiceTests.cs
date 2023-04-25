@@ -51,6 +51,25 @@ namespace NetworkUtility.Tests.PingTests
             
             pingService.Should().NotBeNull();
             result.Should().BeNull();
-        }        
+        }
+
+        [Theory]
+        [InlineData("1234", false)]
+        [InlineData("https://www.clickme.edu", false)]
+        [InlineData("www.clickme.edu", true)]
+        [InlineData("sub.sub.sub.domain.click", true)]
+        [InlineData("sub.sub.sub.domain.click/some/path", false)]
+        [InlineData("0.0.0.0", true)]
+        [InlineData("1.3.3.7", true)]
+        [InlineData("!@#$%.42.com", false)]
+        public void PingService_CheckHostNameOrAddress_ReturnsBool(string addresses, bool expected)
+        {
+            var pingService = new PingService();
+
+            var result = pingService.SendPing(addresses);
+
+            pingService.Should().NotBeNull();
+            result.Should().BeNull();
+        }
     }
 }
