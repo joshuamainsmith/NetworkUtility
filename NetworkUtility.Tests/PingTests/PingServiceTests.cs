@@ -13,6 +13,14 @@ namespace NetworkUtility.Tests.PingTests
 {
     public class PingServiceTests : PingService
     {
+        private readonly PingService _pingService;
+
+        public PingServiceTests()
+        {
+            // SUT
+            _pingService = new PingService();
+        }
+
         // ClassName_MethodName_ReturnType()
         [Theory]
         [InlineData("google.com")]
@@ -22,13 +30,12 @@ namespace NetworkUtility.Tests.PingTests
         public void PingService_SendPing_ReturnsPingReply(params string[] addresses)
         {
             // Arrange - variables, classes, mocks
-            var pingService = new PingService();
 
             // Act - Call action methods
-            var result = pingService.SendPing(addresses);
+            var result = _pingService.SendPing(addresses);
 
             // Assert - compare expected return vals with actual
-            pingService.Should().NotBeNull();
+            _pingService.Should().NotBeNull();
             result.Should().NotBeNull();
             result.Address.ToString().Should().NotBeNullOrWhiteSpace();
             result.Options.Ttl.Should().BeGreaterThanOrEqualTo(0);
@@ -44,12 +51,10 @@ namespace NetworkUtility.Tests.PingTests
         [InlineData("console.cloud.google.com/getting-started")]
         [InlineData("https://www.google.com", "!@#$%^&.url.com", "console.cloud.google.com/getting-started")]
         public void PingService_SendPing_ReturnsNull(params string[] addresses)
-        {
-            var pingService = new PingService();
+        {            
+            var result = _pingService.SendPing(addresses);
             
-            var result = pingService.SendPing(addresses);
-            
-            pingService.Should().NotBeNull();
+            _pingService.Should().NotBeNull();
             result.Should().BeNull();
         }
 
