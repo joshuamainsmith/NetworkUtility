@@ -24,38 +24,65 @@ namespace NetworkUtility.Services
 
         public void GetTcpStatistics(bool IpV6 = false)
         {
-            tcpstat = SetTcpStatistics(IpV6);
+            var tcp = SetTcpStatistics(IpV6);
 
-            if (tcpstat != null)
+            if (tcp != null)
             {
                 Console.WriteLine("  Minimum Transmission Timeout............. : {0}",
-                    tcpstat.MinimumTransmissionTimeout);
+                    tcp.MinimumTransmissionTimeout);
                 Console.WriteLine("  Maximum Transmission Timeout............. : {0}",
-                    tcpstat.MaximumTransmissionTimeout);
+                    tcp.MaximumTransmissionTimeout);
+                Console.WriteLine("  Maximum Connections...................... : {0}",
+                    tcp.MaximumConnections);
 
                 Console.WriteLine("  Connection Data:");
                 Console.WriteLine("      Current  ............................ : {0}",
-                tcpstat.CurrentConnections);
+                tcp.CurrentConnections);
                 Console.WriteLine("      Cumulative .......................... : {0}",
-                    tcpstat.CumulativeConnections);
+                    tcp.CumulativeConnections);
                 Console.WriteLine("      Initiated ........................... : {0}",
-                    tcpstat.ConnectionsInitiated);
+                    tcp.ConnectionsInitiated);
                 Console.WriteLine("      Accepted ............................ : {0}",
-                    tcpstat.ConnectionsAccepted);
+                    tcp.ConnectionsAccepted);
                 Console.WriteLine("      Failed Attempts ..................... : {0}",
-                    tcpstat.FailedConnectionAttempts);
+                    tcp.FailedConnectionAttempts);
                 Console.WriteLine("      Reset ............................... : {0}",
-                    tcpstat.ResetConnections);
+                    tcp.ResetConnections);
+                Console.WriteLine("      Resets Sent.......................... : {0}",
+                    tcp.ResetsSent);
+
+                Console.WriteLine("      Errors Received...................... : {0}",
+                    tcp.ErrorsReceived);
 
                 Console.WriteLine("");
                 Console.WriteLine("  Segment Data:");
                 Console.WriteLine("      Received  ........................... : {0}",
-                    tcpstat.SegmentsReceived);
+                    tcp.SegmentsReceived);
                 Console.WriteLine("      Sent ................................ : {0}",
-                    tcpstat.SegmentsSent);
+                    tcp.SegmentsSent);
                 Console.WriteLine("      Retransmitted ....................... : {0}",
-                    tcpstat.SegmentsResent);
+                    tcp.SegmentsResent);
 
+                Console.WriteLine("");
+            }
+        }
+
+        public void GetUdpStatistics(bool IpV6 = false)
+        {
+            var udp = SetUdpStatistics(IpV6);
+
+            if (udp != null)
+            {
+                Console.WriteLine("  Datagrams Received ...................... : {0}",
+                    udp.DatagramsReceived);
+                Console.WriteLine("  Datagrams Sent .......................... : {0}",
+                    udp.DatagramsSent);
+                Console.WriteLine("  Incoming Datagrams Discarded ............ : {0}",
+                    udp.IncomingDatagramsDiscarded);
+                Console.WriteLine("  Incoming Datagrams With Errors .......... : {0}",
+                    udp.IncomingDatagramsWithErrors);
+                Console.WriteLine("  UDP Listeners ........................... : {0}",
+                    udp.UdpListeners);
                 Console.WriteLine("");
             }
         }
@@ -78,6 +105,26 @@ namespace NetworkUtility.Services
             }
 
             return tcpstat;
+        }
+
+        UdpStatistics SetUdpStatistics(bool isIpv6)
+        {
+            switch (isIpv6)
+            {
+                case false:
+                    udpStat = properties.GetUdpIPv4Statistics();
+                    Console.WriteLine("UDP/IPv4 Statistics:");
+                    break;
+                case true:
+                    udpStat = properties.GetUdpIPv6Statistics();
+                    Console.WriteLine("UDP/IPv6 Statistics:");
+                    break;
+                default:
+                    throw new ArgumentException("version");
+                    //    break;
+            }
+
+            return udpStat;
         }
     }    
 }
