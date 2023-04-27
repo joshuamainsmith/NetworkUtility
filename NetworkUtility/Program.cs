@@ -7,3 +7,5 @@ pingService.SendPingByFile("C:\\addresses.txt");
 NetworkStatistics statistics = new NetworkStatistics();
 
 statistics.GetTcpStatistics();
+
+statistics.GetUdpStatistics();
