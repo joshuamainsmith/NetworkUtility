@@ -42,7 +42,7 @@ namespace NetworkUtility.Tests.PingTests
             result.RoundtripTime.Should().BeGreaterThanOrEqualTo(0);
             result.Options.DontFragment.Should().Be(false);
             result.Should().BeOfType<PingReply>().Which.Buffer.Length.Should().BeLessThanOrEqualTo(65507);   // https://stackoverflow.com/q/9449837
-        }        
+        }
 
         [Theory]
         [InlineData("1234")]
@@ -51,9 +51,9 @@ namespace NetworkUtility.Tests.PingTests
         [InlineData("console.cloud.google.com/getting-started")]
         [InlineData("https://www.google.com", "!@#$%^&.url.com", "console.cloud.google.com/getting-started")]
         public void PingService_SendPing_ReturnsNull(params string[] addresses)
-        {            
+        {
             var result = _pingService.SendPing(addresses);
-            
+
             _pingService.Should().NotBeNull();
             result.Should().BeNull();
         }

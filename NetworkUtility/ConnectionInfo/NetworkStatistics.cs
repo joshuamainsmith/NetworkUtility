@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetworkUtility.Services
+namespace NetworkUtility.ConnectionInfo
 {
     public class NetworkStatistics
     {
@@ -15,7 +15,7 @@ namespace NetworkUtility.Services
         UdpStatistics? udpStat { get; set; }
         IPGlobalProperties properties { get; set; }
 
-        public NetworkStatistics() 
+        public NetworkStatistics()
         {
             properties = IPGlobalProperties.GetIPGlobalProperties();
             tcpstat = null;
@@ -126,5 +126,5 @@ namespace NetworkUtility.Services
 
             return udpStat;
         }
-    }    
+    }
 }

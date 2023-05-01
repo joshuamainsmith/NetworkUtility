@@ -1,4 +1,5 @@
-﻿using NetworkUtility.Services;
+﻿using NetworkUtility.ConnectionInfo;
+using NetworkUtility.Services;
 
 PingService pingService = new PingService();
 
