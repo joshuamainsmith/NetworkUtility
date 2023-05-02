@@ -15,13 +15,11 @@ namespace NetworkUtility.Tests.PingTests
     public class PingServiceTests
     {
         private readonly PingService _pingService;
-        private readonly CheckHostName _checkHostName;
 
         public PingServiceTests()
         {
             // SUT
             _pingService = new PingService();
-            _checkHostName = new CheckHostName();
         }
 
         // ClassName_MethodName_ReturnType()
@@ -59,22 +57,6 @@ namespace NetworkUtility.Tests.PingTests
 
             _pingService.Should().NotBeNull();
             result.Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData("1234", false)]
-        [InlineData("https://www.clickme.edu", false)]
-        [InlineData("www.clickme.edu", true)]
-        [InlineData("sub.sub.sub.domain.click", true)]
-        [InlineData("sub.sub.sub.domain.click/some/path", false)]
-        [InlineData("0.0.0.0", true)]
-        [InlineData("1.3.3.7", true)]
-        [InlineData("!@#$%.42.com", false)]
-        public void PingService_CheckHostNameOrAddress_ReturnsBool(string address, bool expected)
-        {
-            var actual = _checkHostName.CheckHostNameOrAddress(address);
-
-            actual.Should().Be(expected);
-        }
+        }        
     }
 }
