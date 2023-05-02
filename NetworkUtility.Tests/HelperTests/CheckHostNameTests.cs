@@ -18,13 +18,14 @@ namespace NetworkUtility.Tests.HelperTests
         }
 
         [Theory]
-        [InlineData("1234", false)]
-        [InlineData("https://www.clickme.edu", false)]
         [InlineData("www.clickme.edu", true)]
         [InlineData("sub.sub.sub.domain.click", true)]
-        [InlineData("sub.sub.sub.domain.click/some/path", false)]
         [InlineData("0.0.0.0", true)]
         [InlineData("1.3.3.7", true)]
+        [InlineData("1234", false)]
+        [InlineData("https://www.clickme.edu", false)]
+        [InlineData("sub.sub.sub.domain.click/some/path", false)]
+        [InlineData("some.domain.com:1337", false)]
         [InlineData("!@#$%.42.com", false)]
         public void PingService_CheckHostNameOrAddress_ReturnsBool(string address, bool expected)
         {
