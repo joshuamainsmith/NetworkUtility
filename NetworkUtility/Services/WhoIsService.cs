@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NetworkUtility.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Whois.NET;
@@ -17,16 +19,23 @@ namespace NetworkUtility.Services
         WhoisResponse? response { get; set; }
         string? host { get; set; }
 
+        private readonly CheckHostName _checkHostName;
+
         public WhoIsService()
         {
             response = null;
             host = null;
+            _checkHostName = new CheckHostName();
         }
 
         public WhoIsService(string host)
         {
             response = null;
-            this.host = host;
+            
+            bool isValid = _checkHostName.CheckHostNameOrAddress(host);
+
+            if (!isValid) this.host = null;
+            else this.host = host;
         }
 
         public WhoisResponse? WhoIs()
@@ -40,6 +49,10 @@ namespace NetworkUtility.Services
 
         public WhoisResponse? WhoIs(string host)
         {
+            bool isValid = _checkHostName.CheckHostNameOrAddress(host);
+
+            if(!isValid) return null;
+
             this.host = host;
 
             response = WhoIs();
