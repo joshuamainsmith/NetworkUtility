@@ -43,19 +43,24 @@ namespace NetworkUtility.Services
 
             bool isValid = _checkHostName.CheckHostNameOrAddress(address);
 
-            if(!isValid) return null;
+            if(!isValid)
+            {
+                AnsiConsole.MarkupLine($"[red]{address} is not a valid address[/]\n");
+                return null;
+            }
 
             this.address = address;
 
             try
             {
-                Console.WriteLine(address);
+                Console.Write(address + " | ");
                 pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
                 ReadPingInfo(pingReply);
             }
             catch (PingException ex)
             {
-                Console.WriteLine(ex.InnerException);
+                //Console.WriteLine(ex.InnerException);
+                AnsiConsole.MarkupLine($"[red]{ex.InnerException.Message}[/]");
                 Console.WriteLine();
                 return null;
             }
@@ -100,7 +105,8 @@ namespace NetworkUtility.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                //Console.WriteLine(ex.Message);
+                AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
                 return null;
             }
 
@@ -109,16 +115,30 @@ namespace NetworkUtility.Services
 
         void ReadPingInfo(PingReply pingReply)
         {
-            Console.WriteLine(pingReply.Status);
             if (pingReply.Status == IPStatus.Success)
             {
-                Console.WriteLine("Address: {0}", pingReply.Address.ToString());
-                Console.WriteLine("Address Family: {0}", pingReply.Address.AddressFamily.ToString());
-                Console.WriteLine("RoundTrip time: {0}", pingReply.RoundtripTime);
-                Console.WriteLine("Time to live: {0}", pingReply.Options.Ttl);
-                Console.WriteLine("Don't fragment: {0}", pingReply.Options.DontFragment);
-                Console.WriteLine("Buffer size: {0}", pingReply.Buffer.Length);
+                AnsiConsole.MarkupLine($"[green]{pingReply.Status}[/]");
+                var table = new Table();
+
+                table.Border(TableBorder.Rounded);
+
+                table.AddColumn("[blue]Address[/]").Centered();
+                table.AddColumn(new TableColumn("[blue]Address Family[/]").Centered());
+                table.AddColumn(new TableColumn("[blue]RoundTrip time[/]").Centered());
+                table.AddColumn(new TableColumn("[blue]Time to live[/]").Centered());
+                table.AddColumn(new TableColumn("[blue]Don't fragment[/]").Centered());
+                table.AddColumn(new TableColumn("[blue]Buffer size[/]").Centered());
+
+                table.AddRow($"{pingReply.Address.ToString()}", $"{pingReply.Address.AddressFamily.ToString()}", $"{pingReply.RoundtripTime}",
+                    $"{pingReply.Options.Ttl}", $"{pingReply.Options.DontFragment}", $"{pingReply.Buffer.Length}");
+
+                AnsiConsole.Write(table);
+
                 Console.WriteLine();
+            }
+            else
+            {
+                AnsiConsole.MarkupLine($"[red]{pingReply.Status}[/]");
             }
         }
     }
