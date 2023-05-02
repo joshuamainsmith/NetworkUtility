@@ -1,11 +1,10 @@
-﻿using NetworkUtility.ConnectionInfo;
-using NetworkUtility.Services;
+﻿using NetworkUtility.Services;
 
 PingService pingService = new PingService();
 
 pingService.SendPingByFile("C:\\addresses.txt");
 
-NetworkStatistics statistics = new NetworkStatistics();
+NetworkStatisticsService statistics = new NetworkStatisticsService();
 
 statistics.GetTcpStatistics();
 

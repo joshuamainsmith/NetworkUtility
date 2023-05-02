@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NetworkUtility.Helpers;
 using NetworkUtility.Services;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,16 @@ using System.Threading.Tasks;
 
 namespace NetworkUtility.Tests.PingTests
 {
-    public class PingServiceTests : PingService
+    public class PingServiceTests
     {
         private readonly PingService _pingService;
+        private readonly CheckHostName _checkHostName;
 
         public PingServiceTests()
         {
             // SUT
             _pingService = new PingService();
+            _checkHostName = new CheckHostName();
         }
 
         // ClassName_MethodName_ReturnType()
@@ -69,7 +72,7 @@ namespace NetworkUtility.Tests.PingTests
         [InlineData("!@#$%.42.com", false)]
         public void PingService_CheckHostNameOrAddress_ReturnsBool(string address, bool expected)
         {
-            var actual = CheckHostNameOrAddress(address);
+            var actual = _checkHostName.CheckHostNameOrAddress(address);
 
             actual.Should().Be(expected);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkUtility.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace NetworkUtility.Services
 {
     public class PingService
     {
+        private readonly CheckHostName _checkHostName;
+
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
         PingReply? pingReply { get; set; }
@@ -21,9 +24,7 @@ namespace NetworkUtility.Services
         string? address { get; set; }
         string[]? addresses { get; set; }
         string? filePath { get; set; }
-        // https://regexper.com/#%5E%28www%5C.%29%3F%5Cw%2B%28%5C.%5Cw%2B%29%2B%24
-        static Regex checkValidHostOrIP = new Regex(@"^(www\.)?\w+(\.\w+)+$", 
-            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        
 
         public PingService()
         {
@@ -32,14 +33,15 @@ namespace NetworkUtility.Services
             pingOptions.DontFragment = true;
             data = "**Network Connection Test Ping**";
             buffer = Encoding.ASCII.GetBytes(data);
-            timeout = 1000;           
+            timeout = 1000;
+            _checkHostName = new CheckHostName();
         }
 
         public PingReply? SendPing(string address)
         {
             if(address == String.Empty) return null;
 
-            bool isValid = CheckHostNameOrAddress(address);
+            bool isValid = _checkHostName.CheckHostNameOrAddress(address);
 
             if(!isValid) return null;
 
@@ -103,14 +105,7 @@ namespace NetworkUtility.Services
             }
 
             return pingReply ?? null;
-        }
-
-        protected bool CheckHostNameOrAddress(string address)
-        {
-            MatchCollection matches = checkValidHostOrIP.Matches(address);
-
-            return matches.Count > 0;
-        }
+        }        
 
         void ReadPingInfo(PingReply pingReply)
         {
