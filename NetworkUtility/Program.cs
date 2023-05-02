@@ -10,3 +10,7 @@ NetworkStatistics statistics = new NetworkStatistics();
 statistics.GetTcpStatistics();
 
 statistics.GetUdpStatistics();
+
+WhoIsService whoIs = new WhoIsService();
+
+whoIs.WhoIs("google.com");
