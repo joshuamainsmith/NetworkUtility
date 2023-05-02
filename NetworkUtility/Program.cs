@@ -12,4 +12,6 @@ statistics.GetUdpStatistics();
 
 WhoIsService whoIs = new WhoIsService();
 
-whoIs.WhoIs("google.com");
+whoIs.WhoIs("8.8.8.8");
+
+whoIs.GetWhoIsInfo(true, true, true);
