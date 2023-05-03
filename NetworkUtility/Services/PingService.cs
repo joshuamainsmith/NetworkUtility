@@ -96,9 +96,6 @@ namespace NetworkUtility.Services
             var start = IPAddress.Parse(startAddress);
             var end = IPAddress.Parse(endAddress);
 
-            if (start.GetAddressBytes().Length != 4) return null;
-            if (end.GetAddressBytes().Length != 4) return null;
-
             var range = new IPAddressRange(start, end);
 
             foreach (var ip in range)
