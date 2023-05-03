@@ -45,7 +45,7 @@ namespace NetworkUtility.Services
 
             if(!isValid)
             {
-                AnsiConsole.MarkupLine($"[red]{address} is not a valid address[/]\n");
+                AnsiConsole.MarkupLine($"[red]{address} is an invalid address[/]\n");
                 return null;
             }
 
@@ -58,9 +58,9 @@ namespace NetworkUtility.Services
                 ReadPingInfo(pingReply);
             }
             catch (PingException ex)
-            {
-                //Console.WriteLine(ex.InnerException);
+            {                
                 AnsiConsole.MarkupLine($"[red]{ex.InnerException.Message}[/]");
+                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 Console.WriteLine();
                 return null;
             }
@@ -105,8 +105,8 @@ namespace NetworkUtility.Services
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
                 AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 return null;
             }
 
@@ -120,7 +120,9 @@ namespace NetworkUtility.Services
                 AnsiConsole.MarkupLine($"[green]{pingReply.Status}[/]");
                 var table = new Table();
 
-                table.Border(TableBorder.Rounded);
+                table.Border(TableBorder.MinimalDoubleHead);
+
+                table.Centered();
 
                 table.AddColumn("[blue]Address[/]").Centered();
                 table.AddColumn(new TableColumn("[blue]Address Family[/]").Centered());
