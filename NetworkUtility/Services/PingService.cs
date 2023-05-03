@@ -1,8 +1,10 @@
-﻿using NetworkUtility.Helpers;
+﻿using NetTools;
+using NetworkUtility.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -83,6 +85,53 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        public PingReply? SendPingByRange(string startAddress, string endAddress)
+        {
+            if (startAddress == String.Empty || endAddress == String.Empty) return null;
+
+            bool isValid = CheckIPByRange(startAddress, endAddress);
+
+            if (!isValid) return null;
+
+            var start = IPAddress.Parse(startAddress);
+            var end = IPAddress.Parse(endAddress);
+
+            if (start.GetAddressBytes().Length != 4) return null;
+            if (end.GetAddressBytes().Length != 4) return null;
+
+            var range = new IPAddressRange(start, end);
+
+            foreach (var ip in range)
+            {
+                pingReply = SendPing(ip.ToString());
+            }
+
+            return pingReply ?? null;
+        }
+
+        bool CheckIPByRange(string startAddress, string endAddress)
+        {
+            bool isValid = _checkHostName.CheckHostNameOrAddress(startAddress);
+            bool startLength = IPAddress.Parse(startAddress).GetAddressBytes().Length is 4;
+            bool endLength = IPAddress.Parse(endAddress).GetAddressBytes().Length is 4;
+
+            if (!isValid && !startLength)
+            {
+                AnsiConsole.MarkupLine($"[red]{startAddress} is an invalid address[/]\n");
+                return false;
+            }
+
+            isValid = _checkHostName.CheckHostNameOrAddress(endAddress);
+
+            if (!isValid && !endLength)
+            {
+                AnsiConsole.MarkupLine($"[red]{endAddress} is an invalid address[/]\n");
+                return false;
+            }
+
+            return true;
+        }
+
         public PingReply? SendPingByFile(string filePath)
         {
             this.filePath = filePath;
@@ -111,7 +160,7 @@ namespace NetworkUtility.Services
             }
 
             return pingReply ?? null;
-        }        
+        }
 
         void ReadPingInfo(PingReply pingReply)
         {
