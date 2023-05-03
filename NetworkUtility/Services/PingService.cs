@@ -85,6 +85,40 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        async Task<PingReply?> SendPingAsync(IEnumerable<IPAddress> iPAddresses)
+        {
+            // https://stackoverflow.com/questions/26959905/how-to-quickly-ping-all-ip-addresses-in-a-network
+
+            IPAddress start = IPAddress.Parse("192.168.1.1");
+            var bytes = start.GetAddressBytes();
+            var leastSigByte = start.GetAddressBytes().Last();
+            var range = 255 - leastSigByte;
+
+            var pingReplyTasks = Enumerable.Range(leastSigByte, range)
+                .Select(x => {
+                    var p = new Ping();
+                    var bb = start.GetAddressBytes();
+                    bb[3] = (byte)x;
+                    var destIp = new IPAddress(bb);
+                    var pingResultTask = p.SendPingAsync(destIp);
+                    return new { pingResultTask, addr = destIp };
+                })
+                .ToList();
+
+            await Task.WhenAll(pingReplyTasks.Select(x => x.pingResultTask));
+
+            foreach (var pr in pingReplyTasks)
+            {
+                var tsk = pr.pingResultTask;
+                var pingResult = tsk.Result; //we know these are completed tasks
+                var ip = pr.addr;
+
+                Console.WriteLine("{0} : {1}", ip, pingResult.Status);
+            }
+
+            return pingReply ?? null;
+        }
+
         public PingReply? SendPingByRange(string startAddress, string endAddress)
         {
             if (startAddress == String.Empty || endAddress == String.Empty) return null;
