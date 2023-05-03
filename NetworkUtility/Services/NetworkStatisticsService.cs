@@ -28,40 +28,52 @@ namespace NetworkUtility.Services
 
             if (tcp != null)
             {
-                Console.WriteLine("  Minimum Transmission Timeout............. : {0}",
-                    tcp.MinimumTransmissionTimeout);
-                Console.WriteLine("  Maximum Transmission Timeout............. : {0}",
-                    tcp.MaximumTransmissionTimeout);
-                Console.WriteLine("  Maximum Connections...................... : {0}",
-                    tcp.MaximumConnections);
+                // Create the tree
+                var root = new Tree($"[blue]{protocol}[/]");
 
-                Console.WriteLine("  Connection Data:");
-                Console.WriteLine("      Current  ............................ : {0}",
-                tcp.CurrentConnections);
-                Console.WriteLine("      Cumulative .......................... : {0}",
-                    tcp.CumulativeConnections);
-                Console.WriteLine("      Initiated ........................... : {0}",
-                    tcp.ConnectionsInitiated);
-                Console.WriteLine("      Accepted ............................ : {0}",
-                    tcp.ConnectionsAccepted);
-                Console.WriteLine("      Failed Attempts ..................... : {0}",
-                    tcp.FailedConnectionAttempts);
-                Console.WriteLine("      Reset ............................... : {0}",
-                    tcp.ResetConnections);
-                Console.WriteLine("      Resets Sent.......................... : {0}",
-                    tcp.ResetsSent);
+                // Add some nodes
+                var transmissions = root.AddNode("[yellow]Transmission Data[/]");
+                var table = transmissions.AddNode(new Table()
+                    .RoundedBorder()
+                    .AddColumn("[aquamarine1_1]Minimum Transmission Timeout[/]")
+                    .AddColumn("[aquamarine1_1]Maximum Transmission Timeout[/]")
+                    .AddColumn("[aquamarine1_1]Maximum Connections[/]")
+                    .AddRow($"{tcp.MinimumTransmissionTimeout}", $"{tcp.MaximumTransmissionTimeout}", $"{tcp.MaximumConnections}"));
 
-                Console.WriteLine("      Errors Received...................... : {0}",
-                    tcp.ErrorsReceived);
+                var connections = root.AddNode("[yellow]Connection Data[/]");
+                connections.AddNode(new Table()
+                    .RoundedBorder()
+                    .AddColumn("[aquamarine1_1]Current[/]")
+                    .AddColumn("[aquamarine1_1]Cumulative[/]")
+                    .AddColumn("[aquamarine1_1]Initiated[/]")
+                    .AddColumn("[aquamarine1_1]Accepted[/]")
+                    .AddColumn("[aquamarine1_1]Failed Attempts[/]")
+                    .AddColumn("[aquamarine1_1]Reset[/]")
+                    .AddColumn("[aquamarine1_1]Resets Sent[/]")
+                    .AddColumn("[aquamarine1_1]Errors Received[/]")
+                    .AddRow($"{tcp.CurrentConnections}", 
+                    $"{tcp.CumulativeConnections}", 
+                    $"{tcp.ConnectionsInitiated}",
+                    $"{tcp.ConnectionsAccepted}",
+                    $"{tcp.FailedConnectionAttempts}",
+                    $"{tcp.ResetConnections}",
+                    $"{tcp.ResetsSent}",
+                    $"{tcp.ErrorsReceived}"
+                    ));
 
-                Console.WriteLine("");
-                Console.WriteLine("  Segment Data:");
-                Console.WriteLine("      Received  ........................... : {0}",
-                    tcp.SegmentsReceived);
-                Console.WriteLine("      Sent ................................ : {0}",
-                    tcp.SegmentsSent);
-                Console.WriteLine("      Retransmitted ....................... : {0}",
-                    tcp.SegmentsResent);
+                var segments = root.AddNode("[yellow]Segment Data[/]");
+                segments.AddNode(new Table()
+                    .RoundedBorder()
+                    .AddColumn("[aquamarine1_1]Received[/]")
+                    .AddColumn("[aquamarine1_1]Sent[/]")
+                    .AddColumn("[aquamarine1_1]Retransmitted[/]")
+                    .AddRow($"{tcp.SegmentsReceived}",
+                    $"{tcp.SegmentsSent}",
+                    $"{tcp.SegmentsResent}"
+                    ));
+
+                // Render the tree
+                AnsiConsole.Write(root);
 
                 Console.WriteLine("");
             }
@@ -73,16 +85,28 @@ namespace NetworkUtility.Services
 
             if (udp != null)
             {
-                Console.WriteLine("  Datagrams Received ...................... : {0}",
-                    udp.DatagramsReceived);
-                Console.WriteLine("  Datagrams Sent .......................... : {0}",
-                    udp.DatagramsSent);
-                Console.WriteLine("  Incoming Datagrams Discarded ............ : {0}",
-                    udp.IncomingDatagramsDiscarded);
-                Console.WriteLine("  Incoming Datagrams With Errors .......... : {0}",
-                    udp.IncomingDatagramsWithErrors);
-                Console.WriteLine("  UDP Listeners ........................... : {0}",
-                    udp.UdpListeners);
+                // Create the tree
+                var root = new Tree($"[blue]{protocol}[/]");
+
+                // Add some nodes
+                var transmissions = root.AddNode("[yellow]Transmission Data[/]");
+                var table = transmissions.AddNode(new Table()
+                    .RoundedBorder()
+                    .AddColumn("[aquamarine1_1]Datagrams Received[/]")
+                    .AddColumn("[aquamarine1_1]Datagrams Sent[/]")
+                    .AddColumn("[aquamarine1_1]Incoming Datagrams Discarded[/]")
+                    .AddColumn("[aquamarine1_1]Incoming Datagrams With Errors[/]")
+                    .AddColumn("[aquamarine1_1]UDP Listeners[/]")
+                    .AddRow($"{udp.DatagramsReceived}", 
+                    $"{udp.DatagramsSent}", 
+                    $"{udp.IncomingDatagramsDiscarded}",
+                    $"{udp.IncomingDatagramsWithErrors}",
+                    $"{udp.UdpListeners}"
+                    ));
+
+                // Render the tree
+                AnsiConsole.Write(root);
+
                 Console.WriteLine("");
             }
         }
@@ -93,11 +117,11 @@ namespace NetworkUtility.Services
             {
                 case false:
                     tcpstat = properties.GetTcpIPv4Statistics();
-                    Console.WriteLine("TCP/IPv4 Statistics:");
+                    protocol = "TCP/IPv4 Statistics";
                     break;
                 case true:
                     tcpstat = properties.GetTcpIPv6Statistics();
-                    Console.WriteLine("TCP/IPv6 Statistics:");
+                    protocol = "TCP/IPv6 Statistics";
                     break;
                 default:
                     throw new ArgumentException("version");
@@ -113,11 +137,11 @@ namespace NetworkUtility.Services
             {
                 case false:
                     udpStat = properties.GetUdpIPv4Statistics();
-                    Console.WriteLine("UDP/IPv4 Statistics:");
+                    protocol = "UDP/IPv4 Statistics";
                     break;
                 case true:
                     udpStat = properties.GetUdpIPv6Statistics();
-                    Console.WriteLine("UDP/IPv6 Statistics:");
+                    protocol = "UDP/IPv6 Statistics";
                     break;
                 default:
                     throw new ArgumentException("version");
