@@ -85,39 +85,43 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
-        async Task<PingReply?> SendPingAsync(IEnumerable<IPAddress> iPAddresses)
-        {
-            // https://stackoverflow.com/questions/26959905/how-to-quickly-ping-all-ip-addresses-in-a-network
-
-            IPAddress start = IPAddress.Parse("192.168.1.1");
-            var bytes = start.GetAddressBytes();
-            var leastSigByte = start.GetAddressBytes().Last();
-            var range = 255 - leastSigByte;
-
-            var pingReplyTasks = Enumerable.Range(leastSigByte, range)
-                .Select(x => {
-                    var p = new Ping();
-                    var bb = start.GetAddressBytes();
-                    bb[3] = (byte)x;
-                    var destIp = new IPAddress(bb);
-                    var pingResultTask = p.SendPingAsync(destIp);
-                    return new { pingResultTask, addr = destIp };
-                })
-                .ToList();
-
-            await Task.WhenAll(pingReplyTasks.Select(x => x.pingResultTask));
-
-            foreach (var pr in pingReplyTasks)
+        
+        PingReply SendPingByAsync(IPAddressRange range)
+        {            
+            foreach (var ip in range)
             {
-                var tsk = pr.pingResultTask;
-                var pingResult = tsk.Result; //we know these are completed tasks
-                var ip = pr.addr;
+                Console.Write($"{ip} | ");
+                AutoResetEvent waiter = new AutoResetEvent(false);
 
-                Console.WriteLine("{0} : {1}", ip, pingResult.Status);
+                pingSender.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);              
+
+                pingSender.SendAsync(ip, timeout, buffer, pingOptions, waiter);
+
+                waiter.WaitOne();
+
+                //pingSender.SendAsync(ip, timeout, buffer, pingOptions, pingReply);
             }
-
             return pingReply ?? null;
         }
+
+        private static void PingCompletedCallback(object sender, PingCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                ((AutoResetEvent)e.UserState).Set();
+            }
+
+            if (e.Error != null)
+            {
+                ((AutoResetEvent)e.UserState).Set();
+            }
+
+            PingReply reply = e.Reply;
+
+            ReadPingInfo(reply);
+
+            ((AutoResetEvent)e.UserState).Set();
+        }       
 
         public PingReply? SendPingByRange(string startAddress, string endAddress)
         {
@@ -132,10 +136,12 @@ namespace NetworkUtility.Services
 
             var range = new IPAddressRange(start, end);
 
-            foreach (var ip in range)
+            /*foreach (var ip in range)
             {
                 pingReply = SendPing(ip.ToString());
-            }
+            }*/
+
+            SendPingByAsync(range);
 
             return pingReply ?? null;
         }
@@ -193,7 +199,7 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
-        void ReadPingInfo(PingReply pingReply)
+        static void ReadPingInfo(PingReply pingReply)
         {
             if (pingReply.Status == IPStatus.Success)
             {
