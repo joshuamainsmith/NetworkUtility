@@ -31,8 +31,11 @@ namespace NetworkUtility.Services
         public PingService()
         {
             pingSender = new Ping();
-            pingOptions = new PingOptions();
-            pingOptions.DontFragment = true;
+            pingOptions = new PingOptions
+            {
+                DontFragment = true,
+                Ttl = 64
+            };
             data = "**Network Connection Test Ping**";
             buffer = Encoding.ASCII.GetBytes(data);
             timeout = 1000;
