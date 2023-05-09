@@ -55,12 +55,12 @@ namespace NetworkUtility.Services
 
             try
             {
-                Console.Write(address + " | ");
                 pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
                 ReadPingInfo(pingReply);
             }
             catch (PingException ex)
-            {                
+            {
+                AnsiConsole.Markup($"[red]{address}[/] - ");
                 AnsiConsole.MarkupLine($"[red]{ex.InnerException.Message}[/]");
                 AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 Console.WriteLine();
@@ -85,26 +85,21 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
-        
-        PingReply SendPingByAsync(IPAddressRange range)
-        {            
-            foreach (var ip in range)
-            {
-                Console.Write($"{ip} | ");
-                AutoResetEvent waiter = new AutoResetEvent(false);
+        async Task<PingReply> SendPingByAsync(IPAddress ip)
+        {
+            this.address = ip.ToString();
+            AutoResetEvent waiter = new AutoResetEvent(false);
 
-                pingSender.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);              
+            pingSender.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
 
-                pingSender.SendAsync(ip, timeout, buffer, pingOptions, waiter);
+            pingSender.SendAsync(ip, timeout, buffer, pingOptions, waiter);
 
-                waiter.WaitOne();
-
-                //pingSender.SendAsync(ip, timeout, buffer, pingOptions, pingReply);
-            }
+            waiter.WaitOne();
+            
             return pingReply ?? null;
         }
 
-        private static void PingCompletedCallback(object sender, PingCompletedEventArgs e)
+        private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
@@ -116,14 +111,12 @@ namespace NetworkUtility.Services
                 ((AutoResetEvent)e.UserState).Set();
             }
 
-            PingReply reply = e.Reply;
-
-            ReadPingInfo(reply);
+            pingReply = e.Reply;
 
             ((AutoResetEvent)e.UserState).Set();
         }       
 
-        public PingReply? SendPingByRange(string startAddress, string endAddress)
+        public async Task<PingReply?> SendPingByRangeAsync(string startAddress, string endAddress)
         {
             if (startAddress == String.Empty || endAddress == String.Empty) return null;
 
@@ -136,12 +129,11 @@ namespace NetworkUtility.Services
 
             var range = new IPAddressRange(start, end);
 
-            /*foreach (var ip in range)
+            foreach (var ip in range)
             {
-                pingReply = SendPing(ip.ToString());
-            }*/
-
-            SendPingByAsync(range);
+                SendPingByAsync(ip);
+                await ReadPingInfo(pingReply);
+            }
 
             return pingReply ?? null;
         }
@@ -199,8 +191,9 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
-        static void ReadPingInfo(PingReply pingReply)
+        async Task ReadPingInfo(PingReply pingReply)
         {
+            Console.Write(address + " | ");
             if (pingReply.Status == IPStatus.Success)
             {
                 AnsiConsole.MarkupLine($"[green]{pingReply.Status}[/]");
@@ -208,14 +201,12 @@ namespace NetworkUtility.Services
 
                 table.Border(TableBorder.MinimalDoubleHead);
 
-                table.Centered();
-
-                table.AddColumn("[blue]Address[/]").Centered();
-                table.AddColumn(new TableColumn("[blue]Address Family[/]").Centered());
-                table.AddColumn(new TableColumn("[blue]RoundTrip time[/]").Centered());
-                table.AddColumn(new TableColumn("[blue]Time to live[/]").Centered());
-                table.AddColumn(new TableColumn("[blue]Don't fragment[/]").Centered());
-                table.AddColumn(new TableColumn("[blue]Buffer size[/]").Centered());
+                table.AddColumn("[blue]Address[/]");
+                table.AddColumn(new TableColumn("[blue]Address Family[/]"));
+                table.AddColumn(new TableColumn("[blue]RoundTrip time[/]"));
+                table.AddColumn(new TableColumn("[blue]Time to live[/]"));
+                table.AddColumn(new TableColumn("[blue]Don't fragment[/]"));
+                table.AddColumn(new TableColumn("[blue]Buffer size[/]"));
 
                 table.AddRow($"{pingReply.Address.ToString()}", $"{pingReply.Address.AddressFamily.ToString()}", $"{pingReply.RoundtripTime}",
                     $"{pingReply.Options.Ttl}", $"{pingReply.Options.DontFragment}", $"{pingReply.Buffer.Length}");
