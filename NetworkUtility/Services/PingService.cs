@@ -16,6 +16,7 @@ namespace NetworkUtility.Services
     public class PingService
     {
         private readonly CheckHostName _checkHostName;
+        private readonly ExportService _exportService;
 
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
@@ -42,6 +43,7 @@ namespace NetworkUtility.Services
             buffer = Encoding.ASCII.GetBytes(data);
             timeout = 1000;
             _checkHostName = new CheckHostName();
+            _exportService = new ExportService();
         }
 
         /// <summary>
@@ -66,7 +68,8 @@ namespace NetworkUtility.Services
             try
             {
                 pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
-                UpdatePingReplyList(pingReply);
+                var listUpdate = UpdatePingReplyList(pingReply);
+                if (!listUpdate) AnsiConsole.MarkupLine($"[red]Failed to add {address} to the list[/]");
                 ReadPingInfo(pingReply);
             }
             catch (PingException ex)
@@ -129,7 +132,11 @@ namespace NetworkUtility.Services
 
             pingReply = e.Reply;
 
-            if (pingReply != null) UpdatePingReplyList(pingReply);         
+            if (pingReply != null)
+            {
+                var listUpdate = UpdatePingReplyList(pingReply);
+                if (!listUpdate) AnsiConsole.MarkupLine($"[red]Failed to add {pingReply.Address} to the list[/]");
+            }
 
             ((AutoResetEvent)e.UserState).Set();
         }       
