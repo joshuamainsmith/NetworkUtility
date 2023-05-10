@@ -18,7 +18,18 @@ namespace NetworkUtility.Services
             buffer = new StringBuilder();
         }
 
-        public bool writeOutput(string path, string buffer)
+        public bool WriteLogsAppend(string path, StringBuilder buffer)
+        {
+            this.path = path;
+            this.buffer = buffer;
+            writeText = File.AppendText(path);
+            writeText.WriteLine(buffer);
+            writeText.Flush();
+
+            return false;
+        }
+
+        public bool WriteLogsAppend(string path, string buffer)
         {
             this.path = path;
             this.buffer = new StringBuilder(buffer);
