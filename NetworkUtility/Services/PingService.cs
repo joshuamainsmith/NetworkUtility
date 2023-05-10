@@ -20,6 +20,7 @@ namespace NetworkUtility.Services
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
         PingReply? pingReply { get; set; }
+        List<PingReply> pingReplyList { get; set; }
         string data { get; set; }
         byte[] buffer { get; set; }
         int timeout { get; set; }
@@ -36,12 +37,18 @@ namespace NetworkUtility.Services
                 DontFragment = true,
                 Ttl = 64
             };
+            pingReplyList = new List<PingReply>();
             data = "**Network Connection Test Ping**";
             buffer = Encoding.ASCII.GetBytes(data);
             timeout = 1000;
             _checkHostName = new CheckHostName();
         }
 
+        /// <summary>
+        /// Sends an ICMP to the specified IP address or host name.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public PingReply? SendPing(string address)
         {
             if(address == String.Empty) return null;
@@ -59,6 +66,7 @@ namespace NetworkUtility.Services
             try
             {
                 pingReply = pingSender.Send(address, timeout, buffer, pingOptions);
+                UpdatePingReplyList(pingReply);
                 ReadPingInfo(pingReply);
             }
             catch (PingException ex)
@@ -73,6 +81,11 @@ namespace NetworkUtility.Services
             return pingReply;
         }
 
+        /// <summary>
+        /// A wrapper for SendPing(string) that can take multiple IP addresses or host names as input.
+        /// </summary>
+        /// <param name="addresses"></param>
+        /// <returns></returns>
         public PingReply? SendPing(params string[] addresses)
         {
             this.addresses = addresses;
@@ -116,6 +129,8 @@ namespace NetworkUtility.Services
 
             pingReply = e.Reply;
 
+            if (pingReply != null) UpdatePingReplyList(pingReply);         
+
             ((AutoResetEvent)e.UserState).Set();
         }       
 
@@ -135,7 +150,7 @@ namespace NetworkUtility.Services
             foreach (var ip in range)
             {
                 SendPingByAsync(ip);
-                await ReadPingInfo(pingReply);
+                ReadPingInfo(pingReply);
             }
 
             return pingReply ?? null;
@@ -222,6 +237,16 @@ namespace NetworkUtility.Services
             {
                 AnsiConsole.MarkupLine($"[red]{pingReply.Status}[/]");
             }
+        }
+
+        bool UpdatePingReplyList(PingReply pingReply)
+        {
+            if (pingReply == null) return false;
+
+            if (pingReply.Status == IPStatus.Success)
+                pingReplyList.Add(pingReply);
+
+            return true;
         }
     }
 }
