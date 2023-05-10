@@ -253,5 +253,27 @@ namespace NetworkUtility.Services
 
             return true;
         }
+
+        public void ExportPingLogs(string path)
+        {
+            StringBuilder buffer = new StringBuilder();
+            foreach (var pingReply in pingReplyList)
+            {
+                buffer.AppendLine(pingReply.ToString());
+            }
+
+            _exportService.WriteLogsAppend(path, buffer);
+        }
+
+        public void ExportPingLogs()
+        {
+            StringBuilder buffer = new StringBuilder();
+            foreach (var pingReply in pingReplyList)
+            {
+                buffer.AppendLine(pingReply.ToString());
+            }
+
+            _exportService.WriteLogsAppend(Path.GetTempPath(), buffer, @"PingInfo.csv");
+        }
     }
 }
