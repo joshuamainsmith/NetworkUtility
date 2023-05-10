@@ -34,8 +34,22 @@ namespace NetworkUtility.Services
             this.path = path;
             this.buffer = new StringBuilder(buffer);
             writeText = File.AppendText(path);
-            writeText.WriteLine(buffer);
-            writeText.Flush();
+        static bool CheckDirectoryPath(string path)
+        {
+            try
+            {
+                if (!Directory.Exists(path))
+                {
+                    var dirInfo = Directory.CreateDirectory(path);
+                    Console.WriteLine($"Saved directory location: {dirInfo.FullName}");
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+            }
 
             return false;
         }
