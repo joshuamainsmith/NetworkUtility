@@ -31,9 +31,9 @@ namespace NetworkUtility.Services
 
         public bool WriteLogsAppend(string path, string buffer)
         {
-            this.path = path;
-            this.buffer = new StringBuilder(buffer);
-            writeText = File.AppendText(path);
+            return WriteLogsAppend(path, new StringBuilder(buffer));
+        }
+
         static bool CheckDirectoryPath(string path)
         {
             try
