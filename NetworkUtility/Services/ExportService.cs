@@ -18,15 +18,20 @@ namespace NetworkUtility.Services
             buffer = new StringBuilder();
         }
 
-        public bool WriteLogsAppend(string path, StringBuilder buffer)
+        public bool WriteLogsAppend(string path, StringBuilder buffer, string fileName = @"LogInfo.csv")
         {
+            var isValid = CheckDirectoryPath(path);
+            if (!isValid) return false;
+
+            path += fileName;
             this.path = path;
             this.buffer = buffer;
+
             writeText = File.AppendText(path);
             writeText.WriteLine(buffer);
             writeText.Flush();
 
-            return false;
+            return true;
         }
 
         public bool WriteLogsAppend(string path, string buffer)
