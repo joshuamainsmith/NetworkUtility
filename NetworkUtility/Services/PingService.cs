@@ -91,8 +91,6 @@ namespace NetworkUtility.Services
         /// <returns></returns>
         public PingReply? SendPing(params string[] addresses)
         {
-            this.addresses = addresses;
-            
             foreach (string address in addresses)
             {
                 if (address != String.Empty)
