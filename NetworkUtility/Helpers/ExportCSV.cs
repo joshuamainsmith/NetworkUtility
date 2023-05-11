@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetworkUtility.Services
+namespace NetworkUtility.Helpers
 {
-    public class ExportService
+    public class ExportCSV
     {
         string path { get; set; }
         StreamWriter writeText { get; set; }
         StringBuilder buffer { get; set; }
 
-        public ExportService()
+        public ExportCSV()
         {
             path = string.Empty;
             buffer = new StringBuilder();
