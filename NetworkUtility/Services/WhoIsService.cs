@@ -67,64 +67,36 @@ namespace NetworkUtility.Services
             
             if (OrganizationName && (response.OrganizationName != null))
             {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
+                AnsiConsole.MarkupLine($"[blue]{WhoIsService.OrganizationName}[/]");
 
-                Console.Write(WhoIsService.OrganizationName);
-
-                Console.ResetColor();
-
-                Console.WriteLine();
-
-                Console.WriteLine(response.OrganizationName);
+                AnsiConsole.MarkupLine($"{response.OrganizationName}");
 
                 Console.WriteLine();
             }
             if (AddressRange && (response.AddressRange != null))
             {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
+                AnsiConsole.MarkupLine($"[blue]{WhoIsService.AddressRange}[/]");
 
-                Console.Write(WhoIsService.AddressRange);
-
-                Console.ResetColor();
-
-                Console.WriteLine();
-
-                Console.WriteLine("{0} - {1}", response.AddressRange.Begin, response.AddressRange.End);
+                AnsiConsole.MarkupLine("{0} - {1}", response.AddressRange.Begin, response.AddressRange.End);
 
                 Console.WriteLine();
             }
             if (RespondedServers && (response.RespondedServers != null))
             {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
-
-                Console.Write(WhoIsService.RespondedServers);
-
-                Console.ResetColor();
-
-                Console.WriteLine();
+                AnsiConsole.MarkupLine($"[blue]{WhoIsService.RespondedServers}[/]");
 
                 foreach (var server in response.RespondedServers)
                 {
-                    Console.WriteLine(server);
+                    AnsiConsole.MarkupLine(server);
                 }
 
                 Console.WriteLine();
             }
             if (RawData && (response.Raw != null))
             {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
+                AnsiConsole.MarkupLine($"[blue]{WhoIsService.RawData}[/]");
 
-                Console.Write(WhoIsService.RawData);
-
-                Console.ResetColor();
-
-                Console.WriteLine();
-
-                Console.WriteLine(response.Raw);
+                AnsiConsole.MarkupLine(response.Raw);
 
                 Console.WriteLine();
             }

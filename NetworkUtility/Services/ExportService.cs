@@ -46,14 +46,14 @@ namespace NetworkUtility.Services
                 if (!Directory.Exists(path))
                 {
                     var dirInfo = Directory.CreateDirectory(path);
-                    Console.WriteLine($"Saved directory location: {dirInfo.FullName}");
+                    AnsiConsole.MarkupLine($"[green]Saved directory location[/]: {dirInfo.FullName}");
                 }
 
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+                AnsiConsole.MarkupLine("[red]{0}[/]: {1}", e.GetType().Name, e.Message);
             }
 
             return false;
