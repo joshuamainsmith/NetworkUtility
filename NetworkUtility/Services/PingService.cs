@@ -153,16 +153,44 @@ namespace NetworkUtility.Services
             var start = IPAddress.Parse(startAddress);
             var end = IPAddress.Parse(endAddress);
 
+            var first = (long)(uint) IPAddress.NetworkToHostOrder((int) IPAddress.Parse(start.ToString()).Address);
+            var last = (long)(uint) IPAddress.NetworkToHostOrder((int) IPAddress.Parse(end.ToString()).Address);
+
             var range = new IPAddressRange(start, end);
 
-            foreach (var ip in range)
+            /*foreach (var ip in range)
             {
                 SendPingByAsync(ip);
                 ReadPingInfo(pingReply);
-            }
+            }*/
+
+            var result = Parallel.For(
+                first, last, (i, state) =>
+            {
+                Console.WriteLine($"Beginning iteration {i}");                
+
+                if (state.ShouldExitCurrentIteration)
+                {
+                    if (state.LowestBreakIteration < i)
+                        return;
+                }
+                try
+                {
+                    Console.WriteLine(IPAddress.Parse(i.ToString()).ToString());
+                }
+                catch {
+                    Console.WriteLine($"{i} is not an address");
+                }
+
+                pingReply = SendPingByAsync(IPAddress.Parse(i.ToString()).ToString());
+
+                ReadPingInfo(pingReply);
+
+                Console.WriteLine($"Completed iteration {i}");
+            });
 
             return pingReply ?? null;
-        }
+        }        
 
         bool CheckIPByRange(string startAddress, string endAddress)
         {
