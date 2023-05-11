@@ -1,8 +1,11 @@
-﻿using NetTools;
+﻿using CsvHelper;
+using NetTools;
 using NetworkUtility.Helpers;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -254,26 +257,28 @@ namespace NetworkUtility.Services
             return true;
         }
 
-        public void ExportPingLogs(string path)
+        public void ExportPingLogs(string? path = null, string fileName = @"PingInfo.csv")
         {
+            if (path is null) path = Path.GetTempPath();
+
             StringBuilder buffer = new StringBuilder();
+            buffer.AppendLine("Address,Address Family,Round Trip Time,TTL,Don't Fragment,Length");
             foreach (var pingReply in pingReplyList)
             {
-                buffer.AppendLine(pingReply.ToString());
+                buffer.AppendLine(
+                    pingReply.Address.ToString() + "," +
+                    pingReply.Address.AddressFamily.ToString() + "," +
+                    pingReply.RoundtripTime.ToString() + "," +
+                    pingReply.Options.Ttl.ToString() + "," +
+                    pingReply.Options.DontFragment.ToString() + "," +
+                    pingReply.Buffer.Length.ToString()
+                    );
             }
 
-            _exportService.WriteLogsAppend(path, buffer);
-        }
+            var isExported = _exportService.WriteLogsAppend(path, buffer, fileName);
 
-        public void ExportPingLogs()
-        {
-            StringBuilder buffer = new StringBuilder();
-            foreach (var pingReply in pingReplyList)
-            {
-                buffer.AppendLine(pingReply.ToString());
-            }
-
-            _exportService.WriteLogsAppend(Path.GetTempPath(), buffer, @"PingInfo.csv");
-        }
+            if (isExported) AnsiConsole.MarkupLine($"[green]File exported to[/] {path + fileName}");
+            else AnsiConsole.MarkupLine($"[red]Failed to export to[/] {path + fileName}");
+        }        
     }
 }

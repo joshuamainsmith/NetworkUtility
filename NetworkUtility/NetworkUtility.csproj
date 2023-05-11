@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
     <PackageReference Include="WhoisClient.NET" Version="4.0.0" />
   </ItemGroup>
