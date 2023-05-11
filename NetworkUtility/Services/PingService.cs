@@ -19,7 +19,7 @@ namespace NetworkUtility.Services
     public class PingService
     {
         private readonly CheckHostName _checkHostName;
-        private readonly ExportService _exportService;
+        private readonly ExportCSV _exportCSV;
 
         Ping pingSender { get; set; }
         PingOptions pingOptions { get; set; }
@@ -46,7 +46,7 @@ namespace NetworkUtility.Services
             buffer = Encoding.ASCII.GetBytes(data);
             timeout = 1000;
             _checkHostName = new CheckHostName();
-            _exportService = new ExportService();
+            _exportCSV = new ExportCSV();
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace NetworkUtility.Services
                     );
             }
 
-            var isExported = _exportService.WriteLogsAppend(path, buffer, fileName);
+            var isExported = _exportCSV.WriteLogsAppend(path, buffer, fileName);
 
             if (isExported) AnsiConsole.MarkupLine($"[green]File exported to[/] {path + fileName}");
             else AnsiConsole.MarkupLine($"[red]Failed to export to[/] {path + fileName}");
