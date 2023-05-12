@@ -167,26 +167,17 @@ namespace NetworkUtility.Services
             var result = Parallel.For(
                 first, last, (i, state) =>
             {
-                Console.WriteLine($"Beginning iteration {i}");                
-
                 if (state.ShouldExitCurrentIteration)
                 {
                     if (state.LowestBreakIteration < i)
                         return;
                 }
-                try
-                {
-                    Console.WriteLine(IPAddress.Parse(i.ToString()).ToString());
-                }
-                catch {
-                    Console.WriteLine($"{i} is not an address");
-                }
 
-                pingReply = SendPingByAsync(IPAddress.Parse(i.ToString()).ToString());
+                var pingReply = SendPingByAsync(IPAddress.Parse(i.ToString()).ToString());
 
-                ReadPingInfo(pingReply);
+                if (pingReply is not null) ReadPingInfo(pingReply);
+                else Console.WriteLine($"{IPAddress.Parse(i.ToString()).ToString()} not found");
 
-                Console.WriteLine($"Completed iteration {i}");
             });
 
             return pingReply ?? null;
