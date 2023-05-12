@@ -119,6 +119,20 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        PingReply SendPingByAsync(string ip)
+        {
+            this.address = ip.ToString();
+            AutoResetEvent waiter = new AutoResetEvent(false);
+
+            pingSender.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
+
+            pingSender.SendAsync(ip, timeout, buffer, pingOptions, waiter);
+
+            waiter.WaitOne();
+
+            return pingReply ?? null;
+        }
+
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
             if (e.Cancelled)
