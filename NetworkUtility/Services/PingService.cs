@@ -169,7 +169,7 @@ namespace NetworkUtility.Services
             }
 
             ((AutoResetEvent)e.UserState).Set();
-        }       
+        }
 
         /// <summary>
         /// Sends a range of pings in parallel
@@ -302,7 +302,7 @@ namespace NetworkUtility.Services
 
                 table.AddColumn("[blue]Address[/]");
                 table.AddColumn(new TableColumn("[blue]Address Family[/]"));
-                table.AddColumn(new TableColumn("[blue]RoundTrip time[/]"));
+                table.AddColumn(new TableColumn("[blue]RoundTrip time[/]"));    
                 table.AddColumn(new TableColumn("[blue]Time to live[/]"));
                 table.AddColumn(new TableColumn("[blue]Don't fragment[/]"));
                 table.AddColumn(new TableColumn("[blue]Buffer size[/]"));
