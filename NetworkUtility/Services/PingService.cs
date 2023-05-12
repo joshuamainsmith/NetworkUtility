@@ -105,6 +105,11 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        /// <summary>
+        /// Sends pings asynchronously
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         async Task<PingReply> SendPingByAsync(IPAddress ip)
         {
             this.address = ip.ToString();
@@ -119,6 +124,11 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        /// <summary>
+        /// Sends a ping asynchronously
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         PingReply SendPingByAsync(string ip)
         {
             this.address = ip.ToString();
@@ -133,6 +143,11 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        /// <summary>
+        /// Callback for SendPingByAsyc() methods
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
         {
             if (e.Cancelled)
@@ -156,7 +171,16 @@ namespace NetworkUtility.Services
             ((AutoResetEvent)e.UserState).Set();
         }       
 
-        public async Task<PingReply?> SendPingByRangeAsync(string startAddress, string endAddress)
+        /// <summary>
+        /// Sends a range of pings in parallel
+        /// </summary>
+        /// <param name="startAddress"></param>
+        /// <param name="endAddress"></param>
+        /// <returns></returns>
+        /// for later reference: 
+        /// https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.parallel?view=net-7.0
+        /// https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-write-a-parallel-for-loop-with-thread-local-variables
+        public async Task<PingReply>? SendPingByRangeAsync(string startAddress, string endAddress)
         {
             if (startAddress == String.Empty || endAddress == String.Empty) return null;
 
@@ -197,6 +221,12 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }        
 
+        /// <summary>
+        /// Checks for valid start address and end address input
+        /// </summary>
+        /// <param name="startAddress"></param>
+        /// <param name="endAddress"></param>
+        /// <returns></returns>
         bool CheckIPByRange(string startAddress, string endAddress)
         {
             bool isValid = _checkHostName.CheckHostNameOrAddress(startAddress);
@@ -220,6 +250,11 @@ namespace NetworkUtility.Services
             return true;
         }
 
+        /// <summary>
+        /// Sends each line from an input file to SendPing(string), each line being an address
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public PingReply? SendPingByFile(string filePath)
         {
             this.filePath = filePath;
@@ -250,6 +285,11 @@ namespace NetworkUtility.Services
             return pingReply ?? null;
         }
 
+        /// <summary>
+        /// Writes PingReply info to the console
+        /// </summary>
+        /// <param name="pingReply"></param>
+        /// <returns></returns>
         async Task ReadPingInfo(PingReply pingReply)
         {
             Console.Write(address + " | ");
@@ -280,6 +320,11 @@ namespace NetworkUtility.Services
             }
         }
 
+        /// <summary>
+        /// Updates the pingReplyList property from each successful ping
+        /// </summary>
+        /// <param name="pingReply"></param>
+        /// <returns></returns>
         bool UpdatePingReplyList(PingReply pingReply)
         {
             if (pingReply == null) return false;
@@ -290,6 +335,11 @@ namespace NetworkUtility.Services
             return true;
         }
 
+        /// <summary>
+        /// Utilizes exportCSV dependency by writing ping logs to a file location
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
         public void ExportPingLogs(string? path = null, string fileName = @"PingInfo.csv")
         {
             if (path is null) path = Path.GetTempPath();
