@@ -79,8 +79,10 @@ namespace NetworkUtility.Services
             {
                 AnsiConsole.Markup($"[red]{address}[/] - ");
                 AnsiConsole.MarkupLine($"[red]{ex.InnerException.Message}[/]");
-                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
-                Console.WriteLine();
+                #if DEBUG
+                    AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+                    Console.WriteLine();
+                #endif
                 return null;
             }
 
