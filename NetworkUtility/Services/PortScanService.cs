@@ -14,7 +14,7 @@ namespace NetworkUtility.Services
     {
         int port { get; set; }
         string host { get; set; }
-             
+
         /************************************
          * TODO:                            *
          * scan port by file                *
@@ -86,8 +86,8 @@ namespace NetworkUtility.Services
                     AnsiConsole.MarkupLine($"[red]Port {this.port} is not open on {this.host}[/]");
                     AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
                     #if DEBUG
-                        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
-                        Console.WriteLine();
+                    AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+                    Console.WriteLine();
                     #endif
                 }
             }
@@ -102,13 +102,15 @@ namespace NetworkUtility.Services
         /// TODO: validation checking for params
         public void ScanPortByRange(string host, string startPort, string endPort)
         {
-            this.host = host;
             var start = Int32.Parse(startPort);
             var end = Int32.Parse(endPort);
 
             for (var port = start; port < end; port++)
             {
-                using (TcpClient tcpClient = new TcpClient())
+                ScanPort(host, port);                
+            }
+        }        
+
         /// <summary>
         /// Parses an endpoint string. Throws an exception if the wrong format is detected.
         /// </summary>
@@ -116,17 +118,17 @@ namespace NetworkUtility.Services
         /// <returns></returns>
         /// <exception cref="FormatException"></exception>
         static IPEndPoint CreateIPEndPoint(string endPoint)
-                {
+        {
             string[] ep = endPoint.Split(':');
             if (ep.Length != 2) throw new FormatException("Invalid endpoint format");
             IPAddress ip;
             if (!IPAddress.TryParse(ep[0], out ip))
-                    {
+            {
                 throw new FormatException("Invalid ip-adress");
-                    }
+            }
             int port;
             if (!int.TryParse(ep[1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port))
-                    {
+            {
                 throw new FormatException("Invalid port");
             }
             return new IPEndPoint(ip, port);
