@@ -1,6 +1,7 @@
 ﻿using NetTools;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -14,6 +15,17 @@ namespace NetworkUtility.Services
         int port { get; set; }
         string host { get; set; }
              
+        /************************************
+         * TODO:                            *
+         * scan port by file                *
+         * scan port by endpoint            *
+         * scan array of ports              *
+         * scan array of ips                *
+         * continuous port scan             *
+         * param validation checking        *
+         * save ports scanned into a list?  *
+         ***********************************/
+
         public PortScanService(string host = "127.0.0.1", string port = "0")
         {
             this.port = Int32.Parse(port);
@@ -21,7 +33,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Tests a single port given a host.
+        /// Scans a single port given a host. Wrapper for ScanPort(string, int).
         /// </summary>
         /// <param name="host"></param>
         /// <param name="port"></param>
@@ -82,7 +94,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Tests a range of port connections given a host.
+        /// Scans a range of port connections given a host.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="startPort"></param>
