@@ -33,7 +33,7 @@ namespace NetworkUtility.Services
                 catch (Exception ex)
                 {
                     AnsiConsole.MarkupLine($"[red]Port {this.port} is not open on {this.host}[/]");
-                    AnsiConsole.MarkupLine($"[red]{ex.InnerException.Message}[/]");
+                    AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
                     #if DEBUG
                         AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                         Console.WriteLine();
