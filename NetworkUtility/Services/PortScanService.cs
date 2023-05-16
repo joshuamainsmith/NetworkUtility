@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NetTools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +20,12 @@ namespace NetworkUtility.Services
             this.host = host;
         }
 
+        /// <summary>
+        /// Tests a single port given a host.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// TODO: validation checking for params
         public void ScanPort (string host, string port) 
         { 
             this.host = host;
@@ -41,10 +49,38 @@ namespace NetworkUtility.Services
                 }
             }
         }
-                    #if DEBUG
+
+        /// <summary>
+        /// Tests a range of port connections given a host.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="startPort"></param>
+        /// <param name="endPort"></param>
+        /// TODO: validation checking for params
+        public void ScanPortByRange(string host, string startPort, string endPort)
+        {
+            this.host = host;
+            var start = Int32.Parse(startPort);
+            var end = Int32.Parse(endPort);
+
+            for (var port = start; port < end; port++)
+            {
+                using (TcpClient tcpClient = new TcpClient())
+                {
+                    try
+                    {
+                        tcpClient.Connect(this.host, port);
+                        AnsiConsole.MarkupLine($"[green]Port {port} is open on {this.host}[/]");
+                    }
+                    catch (Exception ex)
+                    {
+                        AnsiConsole.MarkupLine($"[red]Port {port} is not open on {this.host}[/]");
+                        AnsiConsole.MarkupLine($"[red]{ex}[/]");
+                        #if DEBUG
                         AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                         Console.WriteLine();
-                    #endif
+                        #endif
+                    }
                 }
             }
         }
