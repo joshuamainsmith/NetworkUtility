@@ -42,6 +42,16 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
+        /// Scans a single endpoint. Wrapper for ScanPort(string, int).
+        /// </summary>
+        /// <param name="ipEndPoint"></param>
+        public void ScanEndPoint(string ipEndPoint)
+        {
+            IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
+
+            ScanPort(endPoint.Address, endPoint.Port);
+        }
+
         /// <summary>
         /// Scans a single port given a host.
         /// </summary>
@@ -87,23 +97,27 @@ namespace NetworkUtility.Services
             for (var port = start; port < end; port++)
             {
                 using (TcpClient tcpClient = new TcpClient())
+        /// <summary>
+        /// Parses an endpoint string. Throws an exception if the wrong format is detected.
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        static IPEndPoint CreateIPEndPoint(string endPoint)
                 {
-                    try
+            string[] ep = endPoint.Split(':');
+            if (ep.Length != 2) throw new FormatException("Invalid endpoint format");
+            IPAddress ip;
+            if (!IPAddress.TryParse(ep[0], out ip))
                     {
-                        tcpClient.Connect(this.host, port);
-                        AnsiConsole.MarkupLine($"[green]Port {port} is open on {this.host}[/]");
+                throw new FormatException("Invalid ip-adress");
                     }
-                    catch (Exception ex)
+            int port;
+            if (!int.TryParse(ep[1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port))
                     {
-                        AnsiConsole.MarkupLine($"[red]Port {port} is not open on {this.host}[/]");
-                        AnsiConsole.MarkupLine($"[red]{ex}[/]");
-                        #if DEBUG
-                        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
-                        Console.WriteLine();
-                        #endif
-                    }
-                }
+                throw new FormatException("Invalid port");
             }
+            return new IPEndPoint(ip, port);
         }
     }
 }
