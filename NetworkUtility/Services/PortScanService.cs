@@ -28,8 +28,29 @@ namespace NetworkUtility.Services
         /// TODO: validation checking for params
         public void ScanPort (string host, string port) 
         { 
+            ScanPort(host, Int32.Parse(port));            
+        }
+
+        /// <summary>
+        /// Scans a single port given a host. Wrapper for ScanPort(string, int).
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        public void ScanPort(IPAddress host, int port)
+        {
+            ScanPort(host.ToString(), port);
+        }
+
+        /// <summary>
+        /// <summary>
+        /// Scans a single port given a host.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        public void ScanPort(string host, int port)
+        {
             this.host = host;
-            this.port = Int32.Parse(port);
+            this.port = port;
 
             using (TcpClient tcpClient = new TcpClient())
             {
