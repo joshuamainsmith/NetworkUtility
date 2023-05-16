@@ -41,5 +41,12 @@ namespace NetworkUtility.Services
                 }
             }
         }
+                    #if DEBUG
+                        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+                        Console.WriteLine();
+                    #endif
+                }
+            }
+        }
     }
 }
