@@ -15,16 +15,17 @@ namespace NetworkUtility.Services
         int port { get; set; }
         string host { get; set; }
 
-        /************************************
-         * TODO:                            *
-         * scan port by file                *
-         * scan port by endpoint            *
-         * scan array of ports              *
-         * scan array of ips                *
-         * continuous port scan             *
-         * param validation checking        *
-         * save ports scanned into a list?  *
-         ***********************************/
+        /********************************************
+         * TODO:                                    *
+         * scan an array of endpoints               *
+         * scan array of ports with ip              *
+         * scan array of ips with port              *
+         * scan array of ips with array of ports    *
+         * continuous port scan                     *
+         * param validation checking                *
+         * scan ports or ips by file                *
+         * save ports scanned into a list?          *
+         ********************************************/
 
         public PortScanService(string host = "127.0.0.1", string port = "0")
         {
@@ -62,6 +63,21 @@ namespace NetworkUtility.Services
             IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
 
             ScanPort(endPoint.Address, endPoint.Port);
+        }
+
+        /// <summary>
+        /// Scans an array of endpoints. Wrapper for ScanPort(string, int).
+        /// </summary>
+        /// <param name="ipEndPoints"></param>
+        /// TODO: validate return value from CreateIPEndPoint
+        public void ScanEndPoint(params string[] ipEndPoints)
+        {
+            foreach (var ipEndPoint in ipEndPoints)
+            {
+                IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
+
+                ScanPort(endPoint.Address, endPoint.Port);
+            }
         }
 
         /// <summary>
