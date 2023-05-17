@@ -33,7 +33,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Scans a single port given a host. Wrapper for ScanPort(string, int).
+        /// Scans a single port given a host.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="port"></param>
@@ -44,7 +44,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Scans a single port given a host. Wrapper for ScanPort(string, int).
+        /// Scans a single port given a host.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="port"></param>
@@ -54,7 +54,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Scans a single endpoint. Wrapper for ScanPort(string, int).
+        /// Scans a single endpoint.
         /// </summary>
         /// <param name="ipEndPoint"></param>
         public void ScanEndPoint(string ipEndPoint)
@@ -65,7 +65,7 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Scans an array of endpoints. Wrapper for ScanPort(string, int).
+        /// Scans an array of endpoints.
         /// </summary>
         /// <param name="ipEndPoints"></param>
         /// TODO: validate return value from CreateIPEndPoint
