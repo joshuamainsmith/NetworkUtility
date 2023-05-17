@@ -93,6 +93,26 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
+        /// Scans an array of hosts by an array of ports. Each host has a one to many relation with the ports.
+        /// </summary>
+        /// <param name="hosts"></param>
+        /// <param name="ports"></param>
+        /// <example>
+        /// Usage:
+        /// <c>ScanPorts(new[] { "google.com", "bing.com" }, 80, 8080)</c>
+        /// </example>
+        public void ScanPorts(string[] hosts, params int[] ports)
+        {
+            foreach (var host in hosts)
+            {
+                foreach (var port in ports)
+                {
+                    ScanPort(host, port);
+                }
+            }
+        }
+
+        /// <summary>
         /// Scans a range of port connections given a host.
         /// </summary>
         /// <param name="host"></param>
