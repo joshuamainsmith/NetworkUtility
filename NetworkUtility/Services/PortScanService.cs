@@ -17,7 +17,6 @@ namespace NetworkUtility.Services
 
         /********************************************
          * TODO:                                    *
-         * scan an array of endpoints               *
          * scan array of ports with ip              *
          * scan array of ips with port              *
          * scan array of ips with array of ports    *
@@ -81,6 +80,24 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
+        /// Scans a range of port connections given a host.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="startPort"></param>
+        /// <param name="endPort"></param>
+        /// TODO: validation checking for params
+        public void ScanPortByRange(string host, string startPort, string endPort)
+        {
+            var start = Int32.Parse(startPort);
+            var end = Int32.Parse(endPort);
+
+            for (var port = start; port < end; port++)
+            {
+                ScanPort(host, port);
+            }
+        }
+
+        /// <summary>
         /// Scans a single port given a host.
         /// </summary>
         /// <param name="host"></param>
@@ -107,25 +124,7 @@ namespace NetworkUtility.Services
                     #endif
                 }
             }
-        }
-
-        /// <summary>
-        /// Scans a range of port connections given a host.
-        /// </summary>
-        /// <param name="host"></param>
-        /// <param name="startPort"></param>
-        /// <param name="endPort"></param>
-        /// TODO: validation checking for params
-        public void ScanPortByRange(string host, string startPort, string endPort)
-        {
-            var start = Int32.Parse(startPort);
-            var end = Int32.Parse(endPort);
-
-            for (var port = start; port < end; port++)
-            {
-                ScanPort(host, port);                
-            }
-        }        
+        }              
 
         /// <summary>
         /// Parses an endpoint string. Throws an exception if the wrong format is detected.
