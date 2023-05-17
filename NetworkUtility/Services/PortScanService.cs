@@ -80,6 +80,19 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
+        /// Scans an array of ports given a host.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="ports"></param>
+        public void ScanEndPoint(string host, params int[] ports)
+        {
+            foreach (var port in ports)
+            {
+                ScanPort(host, port);
+            }
+        }
+
+        /// <summary>
         /// Scans a range of port connections given a host.
         /// </summary>
         /// <param name="host"></param>
