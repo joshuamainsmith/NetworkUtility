@@ -38,7 +38,7 @@ namespace NetworkUtility.Services
         /// <param name="host"></param>
         /// <param name="port"></param>
         /// TODO: validation checking for params
-        public void ScanPort (string host, string port) 
+        public void ScanPort(string host, string port) 
         { 
             ScanPort(host, Int32.Parse(port));            
         }
@@ -69,7 +69,7 @@ namespace NetworkUtility.Services
         /// </summary>
         /// <param name="ipEndPoints"></param>
         /// TODO: validate return value from CreateIPEndPoint
-        public void ScanEndPoint(params string[] ipEndPoints)
+        public void ScanPorts(params string[] ipEndPoints)
         {
             foreach (var ipEndPoint in ipEndPoints)
             {
