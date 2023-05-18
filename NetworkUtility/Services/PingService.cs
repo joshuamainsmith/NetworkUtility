@@ -53,7 +53,7 @@ namespace NetworkUtility.Services
         /// Sends an ICMP to the specified IP address or host name.
         /// </summary>
         /// <param name="address"></param>
-        /// <returns></returns>
+        /// <returns>PingReply if the ping was successful, null otherwise.</returns>
         public PingReply? SendPing(string address)
         {
             if(address == String.Empty) return null;
@@ -93,7 +93,7 @@ namespace NetworkUtility.Services
         /// A wrapper for SendPing(string) that can take multiple IP addresses or host names as input.
         /// </summary>
         /// <param name="addresses"></param>
-        /// <returns></returns>
+        /// <returns>PingReply if the ping was successful, null otherwise.</returns>
         public PingReply? SendPing(params string[] addresses)
         {
             foreach (string address in addresses)
@@ -111,7 +111,7 @@ namespace NetworkUtility.Services
         /// Sends pings asynchronously
         /// </summary>
         /// <param name="ip"></param>
-        /// <returns></returns>
+        /// <returns>PingReply if the ping was successful, null otherwise.</returns>
         async Task<PingReply> SendPingByAsync(IPAddress ip)
         {
             this.address = ip.ToString();
@@ -130,7 +130,7 @@ namespace NetworkUtility.Services
         /// Sends a ping asynchronously
         /// </summary>
         /// <param name="ip"></param>
-        /// <returns></returns>
+        /// <returns>PingReply if the ping was successful, null otherwise.</returns>
         PingReply SendPingByAsync(string ip)
         {
             this.address = ip.ToString();
@@ -178,7 +178,7 @@ namespace NetworkUtility.Services
         /// </summary>
         /// <param name="startAddress"></param>
         /// <param name="endAddress"></param>
-        /// <returns></returns>
+        /// <returns>PingReply if the last ping was successful, null otherwise.</returns>
         /// for later reference: 
         /// https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.parallel?view=net-7.0
         /// https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-write-a-parallel-for-loop-with-thread-local-variables
@@ -228,7 +228,7 @@ namespace NetworkUtility.Services
         /// </summary>
         /// <param name="startAddress"></param>
         /// <param name="endAddress"></param>
-        /// <returns></returns>
+        /// <returns>Returns true if startAddress and endAddress are valid, false otherwise</returns>
         bool CheckIPByRange(string startAddress, string endAddress)
         {
             bool isValid = _checkHostName.CheckHostNameOrAddress(startAddress);
@@ -256,7 +256,10 @@ namespace NetworkUtility.Services
         /// Sends each line from an input file to SendPing(string), each line being an address
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
+        /// <returns>
+        /// PingReply if the ping was successful, null otherwise. 
+        /// Points of failure could be either from reading the file or sending the ping
+        /// </returns>
         public PingReply? SendPingByFile(string filePath)
         {
             this.filePath = filePath;
