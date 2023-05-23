@@ -237,6 +237,12 @@ namespace NetworkUtility.Services
             return new IPEndPoint(ip, port);
         }
 
+        /// <summary>
+        /// Updates the endpoint list with every successful port connection.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
         bool UpdatePortList(string host, int port)
         {
             if (host.Equals(String.Empty) || port.Equals(String.Empty)) return false;
@@ -248,6 +254,11 @@ namespace NetworkUtility.Services
             return true;
         }
 
+        /// <summary>
+        /// Exports open port endpoints to a CSV file. The default file location and filename is %temp% and PortInfo.csv respectively.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
         public void ExportPortLogs(string? path = null, string fileName = @"PortInfo.csv")
         {
             if (endPointList is null)
