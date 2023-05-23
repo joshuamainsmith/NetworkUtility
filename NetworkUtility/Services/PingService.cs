@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -262,8 +263,11 @@ namespace NetworkUtility.Services
         /// </returns>
         public PingReply? SendPingByFile(string filePath)
         {
+            bool isValid = ExportCSV.CheckFilePath(filePath);
+            if (!isValid) return null;
+
             this.filePath = filePath;
-            try 
+            try
             {
                 StreamReader addresses = new StreamReader(filePath);
                 var address = addresses.ReadLine();
