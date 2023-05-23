@@ -39,7 +39,7 @@ namespace NetworkUtility.Helpers
             return WriteLogsAppend(path, new StringBuilder(buffer));
         }
 
-        static bool CheckDirectoryPath(string path)
+        internal static bool CheckDirectoryPath(string path)
         {
             try
             {
