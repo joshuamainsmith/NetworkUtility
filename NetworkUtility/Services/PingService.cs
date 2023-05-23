@@ -353,6 +353,12 @@ namespace NetworkUtility.Services
         {
             if (path is null) path = Path.GetTempPath();
 
+            if (pingReplyList is null)
+            {
+                AnsiConsole.MarkupLine("[red]Nothing to export[/]");
+                return;
+            }
+
             StringBuilder buffer = new StringBuilder();
             buffer.AppendLine("Address,Address Family,Round Trip Time,TTL,Don't Fragment,Length");
             foreach (var pingReply in pingReplyList)
