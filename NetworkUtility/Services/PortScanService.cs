@@ -16,6 +16,7 @@ namespace NetworkUtility.Services
     {
         int port { get; set; }
         string host { get; set; }
+        List<IPEndPoint> endPointList { get; set; }
 
         /********************************************
          * TODO:                                    *
@@ -29,6 +30,7 @@ namespace NetworkUtility.Services
         {
             this.port = Int32.Parse(port);
             this.host = host;
+            endPointList = new List<IPEndPoint>();
         }
 
         /// <summary>
@@ -195,6 +197,7 @@ namespace NetworkUtility.Services
                 {
                     tcpClient.Connect(this.host, this.port);
                     AnsiConsole.MarkupLine($"[green]Port {this.port} is open on {this.host}[/]");
+                    UpdatePortList(this.host, this.port);
                 }
                 catch (Exception ex)
                 {
@@ -228,6 +231,17 @@ namespace NetworkUtility.Services
                 throw new FormatException("Invalid port");
             }
             return new IPEndPoint(ip, port);
+        }
+
+        bool UpdatePortList(string host, int port)
+        {
+            if (host.Equals(String.Empty) || port.Equals(String.Empty)) return false;
+
+            IPEndPoint endPoint = CreateIPEndPoint(host + ":" + port);
+
+            endPointList.Add(endPoint);
+
+            return true;
         }
     }
 }
