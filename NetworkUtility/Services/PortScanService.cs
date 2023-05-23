@@ -127,21 +127,28 @@ namespace NetworkUtility.Services
         }
 
         /// <summary>
-        /// Scans a range of port connections given a host.
+        /// Scans a range of port connections given aan array of hosts.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="startPort"></param>
         /// <param name="endPort"></param>
+        /// /// <example>
+        /// Usage:
+        /// <c>ScanPortByRange(new[] { "google.com", "bing.com" }, 1, 1000)</c>
+        /// </example>
         /// TODO: validation checking for params
-        public void ScanPortByRange(string host, string startPort, string endPort)
+        public void ScanPortByRange(string[] hosts, string startPort, string endPort)
         {
             var start = Int32.Parse(startPort);
             var end = Int32.Parse(endPort);
 
+            foreach (var host in hosts)
+            {
             for (var port = start; port < end; port++)
             {
                 ScanPort(host, port);
             }
+        }
         }
 
         /// <summary>
