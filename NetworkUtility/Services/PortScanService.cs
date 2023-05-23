@@ -57,6 +57,15 @@ namespace NetworkUtility.Services
         /// Scans a single endpoint.
         /// </summary>
         /// <param name="ipEndPoint"></param>
+        public void ScanEndPoint(IPEndPoint endPoint)
+        {
+            ScanPort(endPoint.Address, endPoint.Port);
+        }
+
+        /// <summary>
+        /// Scans a single endpoint.
+        /// </summary>
+        /// <param name="ipEndPoint"></param>
         public void ScanEndPoint(string ipEndPoint)
         {
             IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
