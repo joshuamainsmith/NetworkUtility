@@ -14,6 +14,8 @@ namespace NetworkUtility.Services
 {
     public class PortScanService
     {
+        private readonly ExportCSV _exportCSV;
+
         int port { get; set; }
         string host { get; set; }
         List<IPEndPoint> endPointList { get; set; }
@@ -21,6 +23,7 @@ namespace NetworkUtility.Services
         /********************************************
          * TODO:                                    *
          * continuous port scan                     *
+         * Match open port to common service        *
          * param validation checking                *
          * scan ports or ips by file                *
          * save ports scanned into a list?          *
@@ -31,6 +34,7 @@ namespace NetworkUtility.Services
             this.port = Int32.Parse(port);
             this.host = host;
             endPointList = new List<IPEndPoint>();
+            _exportCSV = new ExportCSV();
         }
 
         /// <summary>
@@ -242,6 +246,33 @@ namespace NetworkUtility.Services
             endPointList.Add(endPoint);
 
             return true;
+        }
+
+        public void ExportPortLogs(string? path = null, string fileName = @"PortInfo.csv")
+        {
+            if (endPointList is null)
+            {
+                AnsiConsole.MarkupLine("[red]Nothing to export[/]");
+                return;
+            }
+
+            if (path is null) path = Path.GetTempPath();
+
+            StringBuilder buffer = new StringBuilder();
+            buffer.AppendLine("Host,Port,Endpoint");
+            foreach (var endPoint in endPointList)
+            {
+                buffer.AppendLine(
+                    endPoint.Address.ToString() + "," +
+                    endPoint.Port.ToString() + "," +
+                    endPoint.ToString()
+                    );
+            }
+
+            var isExported = _exportCSV.WriteLogsAppend(path, buffer, fileName);
+
+            if (isExported) AnsiConsole.MarkupLine($"[green]File exported to[/] {path + fileName}");
+            else AnsiConsole.MarkupLine($"[red]Failed to export to[/] {path + fileName}");
         }
     }
 }
