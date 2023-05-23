@@ -70,7 +70,7 @@ namespace NetworkUtility.Services
         {
             IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
 
-            ScanPort(endPoint.Address, endPoint.Port);
+            ScanEndPoint(endPoint);
         }
 
         /// <summary>
@@ -78,13 +78,18 @@ namespace NetworkUtility.Services
         /// </summary>
         /// <param name="ipEndPoints"></param>
         /// TODO: validate return value from CreateIPEndPoint
-        public void ScanPorts(params string[] ipEndPoints)
+        public void ScanEndPoint(params string[] ipEndPoints)
         {
             foreach (var ipEndPoint in ipEndPoints)
             {
                 IPEndPoint endPoint = CreateIPEndPoint(ipEndPoint);
 
-                ScanPort(endPoint.Address, endPoint.Port);
+                ScanEndPoint(endPoint);
+            }
+        }
+                ScanEndPoint(endPoint);
+            }
+        }
             }
         }
 
@@ -93,7 +98,7 @@ namespace NetworkUtility.Services
         /// </summary>
         /// <param name="host"></param>
         /// <param name="ports"></param>
-        public void ScanEndPoint(string host, params int[] ports)
+        public void ScanPorts(string host, params int[] ports)
         {
             foreach (var port in ports)
             {
