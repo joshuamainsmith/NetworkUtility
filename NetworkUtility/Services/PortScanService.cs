@@ -1,9 +1,11 @@
 ﻿using NetTools;
+using NetworkUtility.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +19,6 @@ namespace NetworkUtility.Services
 
         /********************************************
          * TODO:                                    *
-         * scan array of ports with ip              *
-         * scan array of ips with port              *
-         * scan array of ips with array of ports    *
          * continuous port scan                     *
          * param validation checking                *
          * scan ports or ips by file                *
@@ -87,9 +86,38 @@ namespace NetworkUtility.Services
                 ScanEndPoint(endPoint);
             }
         }
-                ScanEndPoint(endPoint);
+
+        /// <summary>
+        /// Scans a list of endpoints given a filepath.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void ScanEndPointsByFile(string filePath)
+        {
+            bool isValid = ExportCSV.CheckFilePath(filePath);
+            if (!isValid) return;
+
+            try
+            {
+                StreamReader endPoints = new StreamReader(filePath);
+                var endPoint = endPoints.ReadLine();
+
+                while (endPoint != null)
+                {
+                    if (endPoint != String.Empty)
+                    {
+                        ScanEndPoint(endPoint);
+                    }
+
+                    endPoint = endPoints.ReadLine();
+                }
+
+                endPoints.Close();
             }
-        }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+                return;
             }
         }
 
@@ -144,11 +172,11 @@ namespace NetworkUtility.Services
 
             foreach (var host in hosts)
             {
-            for (var port = start; port < end; port++)
-            {
-                ScanPort(host, port);
+                for (var port = start; port < end; port++)
+                {
+                    ScanPort(host, port);
+                }
             }
-        }
         }
 
         /// <summary>
