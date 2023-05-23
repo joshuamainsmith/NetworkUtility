@@ -58,5 +58,25 @@ namespace NetworkUtility.Helpers
 
             return false;
         }
+
+        internal static bool CheckFilePath(string path)
+        {
+            try
+            {
+                if (!File.Exists(path))
+                {                    
+                    AnsiConsole.MarkupLine($"[red]Warning: file not found[/]: {path}");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                AnsiConsole.MarkupLine("[red]{0}[/]: {1}", e.GetType().Name, e.Message);
+            }
+
+            return false;
+        }
     }
 }
